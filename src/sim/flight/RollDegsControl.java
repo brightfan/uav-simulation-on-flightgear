@@ -22,7 +22,8 @@ public class RollDegsControl extends PIDBase{
 		//accumulateError(trimmedError);
 		accumulateError(error);
 		
-		double result =  KP * error + KI * accumulatedError + KD * (currentError - previousError);
+		//double result =  KP * error + KI * accumulatedError + KD * (currentError - previousError);
+		double result = KP * error;
 		
 		result /= 10.0;
 		System.out.println("P is : " + error);
@@ -30,8 +31,8 @@ public class RollDegsControl extends PIDBase{
 		System.out.println("D is : " + (currentError - previousError));
 		System.out.println("result is : " + result);
 		
-		if (result > 0.6) {
-			result = 0.6;
+		if (result > 0.5) {
+			result = 0.5;
 		}
 		else if (result < -0.6) {
 			result = - 0.6;

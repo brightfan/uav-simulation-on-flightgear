@@ -60,12 +60,8 @@ public abstract class AutoPilot {
 
 		try {
 			clientSocket.send(sendPacket);
-			Thread.sleep(100);
 		} catch (IOException e1) {
 			e1.printStackTrace();
-			return false;
-		} catch (InterruptedException e) {
-			e.printStackTrace();
 			return false;
 		}
 
