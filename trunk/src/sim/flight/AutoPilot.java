@@ -11,15 +11,15 @@ import sim.aircraft.Aeroplane;
 import sim.airport.Airport;
 
 public abstract class AutoPilot {
-	private Aeroplane aeroplane;
-	private Airport airport;
+	protected Aeroplane aeroplane;
+	protected Airport airport;
 
 	/* flight control parameters */
-	private float throttle;
-	private float rudder;
-	private float aileron;
-	private float elevator;
-	private int brakeParking;
+	protected float throttle;
+	protected float rudder;
+	protected float aileron;
+	protected float elevator;
+	protected int brakeParking;
 
 	/* network connection */
 	private DatagramSocket clientSocket;

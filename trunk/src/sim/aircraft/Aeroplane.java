@@ -28,6 +28,9 @@ public class Aeroplane {
 	private DatagramSocket serverSocket;
 	private byte[] statusBuffer = new byte[1024];
 	
+	/* charactor */
+	private float takeoffSpeed;
+	
 	public Aeroplane(int port) {
 		try {
 			serverSocket = new DatagramSocket(port);
@@ -35,6 +38,8 @@ public class Aeroplane {
 		} catch (SocketException e) {
 			e.printStackTrace();
 		}
+		
+		takeoffSpeed = -1;
 	}
 	
 	public boolean readStatus() {
@@ -204,6 +209,14 @@ public class Aeroplane {
 
 	public void setLongitude(float longitude) {
 		this.longitude = longitude;
+	}
+
+	public float getTakeoffSpeed() {
+		return takeoffSpeed;
+	}
+
+	public void setTakeoffSpeed(float takeoffSpeed) {
+		this.takeoffSpeed = takeoffSpeed;
 	}
 	
 }
