@@ -1,20 +1,36 @@
 package sim.airport;
 
+import sim.utils.Waypoint;
+
 public abstract class Airport {
 	public String runway;
-	public float direction;
-	public float latitude;
-	public float longitude;
+	private double direction;
+	private Waypoint landingPoint;
+	private Waypoint takingoffPoint;
 	
-	public float getDirection() {
+	public void setDirection(double direction) {
+		this.direction = direction;
+	}
+	
+	public double getDirection() {
 		return direction;
 	}
-	
-	public float getLatitude() {
-		return latitude;
+
+	public Waypoint getLandingPoint() {
+		return landingPoint;
+	}
+
+	public void setLandingPoint(Waypoint landingPoint) {
+		this.landingPoint = landingPoint;
+	}
+
+	public Waypoint getTakingoffPoint() {
+		return takingoffPoint;
+	}
+
+	public void setTakingoffPoint(Waypoint takingoffPoint) {
+		this.takingoffPoint = takingoffPoint;
 	}
 	
-	public float getLongitude() {
-		return longitude;
-	}
+	
 }
