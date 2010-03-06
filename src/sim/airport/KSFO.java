@@ -1,10 +1,12 @@
 package sim.airport;
 
+import sim.utils.Waypoint;
+
 public class KSFO extends Airport {
 	public KSFO() {
 		this.runway = "1L";
-		this.direction = (float) 298;
-		this.latitude = (float) 37.613544;
-		this.longitude = (float) -122.357246;
+		this.setDirection(298.0);
+		this.setLandingPoint(new Waypoint(37.61354101, -122.3572386));
+		this.setTakingoffPoint(new Waypoint(37.62863534, -122.3929095));
 	}
 }

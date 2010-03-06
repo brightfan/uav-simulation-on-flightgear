@@ -8,6 +8,10 @@ public class Waypoint {
 		; // nothing to do
 	}
 	
+	public Waypoint(double latitude, double longitude) {
+		this("Airport", latitude, longitude, 0, 0);
+	}
+	
 	public Waypoint(String id, double latitude, double longitude, double approachRadius) {
 		this(id, latitude, longitude, approachRadius, 0);
 	}
