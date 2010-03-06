@@ -1,19 +1,10 @@
 package sim.flight;
 
-public class RollDegsControl extends PIDBase{
-
-	public RollDegsControl(double KP, double KI, double KD) {
-		super(KP, KI, KD);	
-	}
+public class PitchDegsControl extends PIDBase{
 	
-	/*private double processError(double error) {
-		if (Math.abs(error) > 3) {
-			return error;
-		}
-		else {
-			return 0;
-		}
-	}*/
+	public PitchDegsControl(double KP, double KI, double KD) {
+		super(KP, KI, KD);
+	}
 	
 	@Override
 	public double getResult(double error) {
@@ -26,7 +17,7 @@ public class RollDegsControl extends PIDBase{
 		//double result = KP * error;
 		double result = Math.sin(Math.toRadians(error));
 		
-		result *= 3.0;
+		result *= 6.0;
 		
 		if (result > 0.5) {
 			result = 0.5;
@@ -36,7 +27,7 @@ public class RollDegsControl extends PIDBase{
 		}
 		
 		if (Math.abs(error) > 1.5)
-			return result;
+			return - result;
 		else
 			return 0;
 	}
