@@ -1,4 +1,4 @@
-package sim.flight;
+package sim.controller;
 
 public abstract class PIDBase {
 	protected double KP;

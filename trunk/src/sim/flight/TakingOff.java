@@ -2,6 +2,10 @@ package sim.flight;
 
 import sim.aircraft.Aeroplane;
 import sim.airport.Airport;
+import sim.controller.GroundHeadingControl;
+import sim.controller.PitchDegsControl;
+import sim.controller.RollDegsControl;
+import sim.controller.YawDegsControl;
 
 public class TakingOff extends AutoPilot {
 

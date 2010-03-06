@@ -1,4 +1,5 @@
-package sim.flight;
+package sim.controller;
+
 
 public class RollDegsControl extends PIDBase{
 
