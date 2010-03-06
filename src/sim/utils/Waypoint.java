@@ -13,12 +13,12 @@ public class Waypoint {
 	}
 	
 	public Waypoint(String id, double latitude, 
-					double longitude, double approachRadius, double speedLimit) {
+					double longitude, double approachRadius, double height) {
 		this.id = id;
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.approachRadius = approachRadius;
-		this.height= speedLimit;
+		this.height= height;
 	}
 	
 	/* Please make sure to pass in an array with 5 or more elements */
