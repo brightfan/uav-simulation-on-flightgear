@@ -95,7 +95,7 @@ public class GlideSlope {
 			lon2 = lon2 + 360;
 		}
 
-		return new Waypoint("0", lat2, lon2, 5);
+		return new Waypoint("GLide_Slope", lat2, lon2);
 	}
 
 	public static void main(String[] args) {
