@@ -40,7 +40,7 @@ public class TakingOff extends AutoPilot {
 				} else {
 					throttle = (float) 0.8;
 					rudder = (float) groundHeadingControl
-							.getResult(airport.direction
+							.getResult(airport.getDirection()
 									- aeroplane.getHeadingDeg());
 					aileron = 0;
 					elevator = 0;
@@ -58,8 +58,8 @@ public class TakingOff extends AutoPilot {
 					throttle = (float) 1.0;
 					// rudder = 0;
 					System.out.println("Heading error is: "
-							+ (airport.direction - aeroplane.getHeadingDeg()));
-					rudder = (float) yawDegsControl.getResult(airport.direction
+							+ (airport.getDirection() - aeroplane.getHeadingDeg()));
+					rudder = (float) yawDegsControl.getResult(airport.getDirection()
 							- aeroplane.getHeadingDeg());
 					System.out.println("Rolling error is: "
 							+ (0 - aeroplane.getRollDeg()));
@@ -79,8 +79,8 @@ public class TakingOff extends AutoPilot {
 				throttle = (float) 0.7;
 
 				System.out.println("Heading error is: "
-						+ (airport.direction - aeroplane.getHeadingDeg()));
-				rudder = (float) yawDegsControl.getResult(airport.direction
+						+ (airport.getDirection() - aeroplane.getHeadingDeg()));
+				rudder = (float) yawDegsControl.getResult(airport.getDirection()
 						- aeroplane.getHeadingDeg());
 				System.out.println("Rolling error is: "
 						+ (0 - aeroplane.getRollDeg()));
