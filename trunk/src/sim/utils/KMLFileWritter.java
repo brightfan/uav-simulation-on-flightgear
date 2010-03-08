@@ -1,32 +1,68 @@
 package sim.utils;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-
-import de.micromata.opengis.kml.v_2_2_0.AltitudeMode;
-import de.micromata.opengis.kml.v_2_2_0.Kml;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class KMLFileWritter {
-	public static String filePath = "/Users/Helicopter/Desktop/test.kml";
+	public static String filePath = "/Users/Helicopter/Software/apache-tomcat-6.0.20/webapps/kml/test.kml";
+	public static FileOutputStream fOutStream;
 
 	public static void writeToFile(float latitude, float longitude,
 			float altitude, float heading, float tilt) {
 
-		Kml kml = new Kml();
-		kml.createAndSetDocument().withName("Current Position").withOpen(
-				Boolean.TRUE).createAndSetCamera().withLatitude(latitude)
-				.withLongitude(longitude).withAltitude(altitude).withHeading(
-						heading).withTilt(tilt).withAltitudeMode(
-						AltitudeMode.ABSOLUTE);
+		//Kml kml = new Kml();
+		
+		//kml.createAndSetDocument().withName("Current Position").withOpen(
+		//Boolean.TRUE).createAndSetCamera().withLatitude(latitude)
+		//.withLongitude(longitude).withAltitude(altitude).withHeading(
+		//heading).withTilt(tilt).withAltitudeMode( AltitudeMode.ABSOLUTE);
+		
+		//kml.createAndSetPlacemark().withName("Current Position").withOpen(
+		//		Boolean.TRUE).createAndSetPoint().addToCoordinates(longitude,
+		//		latitude);
+		
+		String kmlStr = "<kml xmlns=\"http://www.opengis.net/kml/2.2\" xmlns:gx=\"http://www.google.com/kml/ext/2.2\" xmlns:atom=\"http://www.w3.org/2005/Atom\" xmlns:xal=\"urn:oasis:names:tc:ciq:xsdschema:xAL:2.0\">" +
+		"<Placemark>" +
+		"<name>current position</name>" +
+		"<open>1</open>" +
+		"<Point>" +
+		"<coordinates>"+longitude+","+latitude+"</coordinates>" +
+		"</Point>" +
+		"</Placemark>" +
+		"</kml>";
+	
 		try {
-			kml.marshal(new File(filePath));
+			//kml.marshal(fOutStream);
+			fOutStream = new FileOutputStream(filePath);
+			fOutStream.write(kmlStr.getBytes());
+			fOutStream.flush();
+			fOutStream.close();
 		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
 	public static void main(String[] args) {
-		writeToFile((float) 37.61354101, (float) -122.3572386, (float) 100,
-				(float) 298, (float) 90);
+
+		double lat1 = 37.61354101;
+		double lon1 = -122.3572386;
+		
+		while (true) {
+			writeToFile((float) lat1, (float) lon1, (float) 100, (float) 298,
+					(float) 90);
+			Waypoint wp = GlideSlope.generateWaypointByDistanceAndBearing(lat1,
+					lon1, 30, 298);
+			lat1 = wp.getLatitude();
+			lon1 = wp.getLongitude();
+			System.out.println("*******");
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }
