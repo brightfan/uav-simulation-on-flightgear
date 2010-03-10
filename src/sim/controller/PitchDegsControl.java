@@ -14,17 +14,18 @@ public class PitchDegsControl extends PIDBase{
 		//accumulateError(trimmedError);
 		accumulateError(error);
 		
-		//double result =  KP * error + KI * accumulatedError + KD * (currentError - previousError);
+		double result =  KP * error + KI * accumulatedError;
 		//double result = KP * error;
-		double result = Math.sin(Math.toRadians(error));
 		
-		result *= 6.0;
+		//System.out.println("P is : " + error);
+		//System.out.println("I is : " + accumulatedError);
+		//System.out.println("result is : " + result + " ********");
 		
 		if (result > 0.5) {
 			result = 0.5;
 		}
-		else if (result < -0.6) {
-			result = - 0.6;
+		else if (result < -0.5) {
+			result = - 0.5;
 		}
 		
 		if (Math.abs(error) > 1.5)

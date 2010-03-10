@@ -21,7 +21,7 @@ public class RollDegsControl extends PIDBase{
 		
 		//double trimmedError = processError(error);
 		//accumulateError(trimmedError);
-		accumulateError(error);
+		//accumulateError(error);
 		
 		//double result =  KP * error + KI * accumulatedError + KD * (currentError - previousError);
 		//double result = KP * error;

@@ -14,15 +14,15 @@ public class YawDegsControl extends PIDBase {
 		//accumulateError(trimmedError);
 		accumulateError(error);
 		
-		double result =  KP * error + KI * accumulatedError + KD * (currentError - previousError);
+		double result =  KP * error + KI * accumulatedError;
 		//double result = KP * error;
 		//double result = Math.sin(Math.toRadians(error));
 		
 		//result *= 2.0;
-		System.out.println("P is : " + error);
-		System.out.println("I is : " + accumulatedError);
-		System.out.println("D is : " + (currentError - previousError));
-		System.out.println("result is : " + result + " ********");
+		//System.out.println("P is : " + error);
+		//System.out.println("I is : " + accumulatedError);
+		//System.out.println("D is : " + (currentError - previousError));
+		//System.out.println("result is : " + result + " ********");
 		
 		if (result > 0.5) {
 			result = 0.5;
