@@ -26,6 +26,10 @@ public abstract class AutoPilot {
 	InetAddress IPAddress;
 	private int outPort;
 	private byte[] sendBuffer = new byte[200];
+	
+	/* logger */
+	protected static boolean isLogging = false;
+	protected static int writeCount = 0;
 
 	private boolean isInitiated;
 
