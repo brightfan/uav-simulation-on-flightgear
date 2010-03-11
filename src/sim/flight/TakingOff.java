@@ -14,7 +14,6 @@ public class TakingOff extends AutoPilot {
 	private RollDegsControl rollDegsControl;
 	private YawDegsControl yawDegsControl;
 	private PitchDegsControl pitchDegsControl;
-	private static int writeCount = 0;
 
 	/* stage control */
 	boolean stage1 = true; /* gears leave ground */
@@ -58,15 +57,14 @@ public class TakingOff extends AutoPilot {
 					System.out.println("Entered stage 3!");
 				} else {
 					throttle = (float) 1.0;
-				
+
 					rudder = (float) yawDegsControl.getResult(airport
 							.getRunwayDirection()
 							- aeroplane.getHeadingDeg());
-					
+
 					aileron = (float) rollDegsControl.getResult(0 - aeroplane
 							.getRollDeg());
 
-					
 					elevator = (float) pitchDegsControl
 							.getResult(8.0 - aeroplane.getPitchDeg());
 
@@ -79,17 +77,18 @@ public class TakingOff extends AutoPilot {
 			if (stage3) {
 				throttle = (float) 0.62;
 
-				System.out.println("Heading error is: "
-						+ (airport.getRunwayDirection() - aeroplane.getHeadingDeg()));
+				// System.out.println("Heading error is: "
+				// + (airport.getRunwayDirection() -
+				// aeroplane.getHeadingDeg()));
 				rudder = (float) yawDegsControl.getResult(airport
 						.getRunwayDirection()
 						- aeroplane.getHeadingDeg());
-				System.out.println("Rolling error is: "
-						+ (0 - aeroplane.getRollDeg()));
+				// System.out.println("Rolling error is: "
+				// + (0 - aeroplane.getRollDeg()));
 				aileron = (float) rollDegsControl.getResult(0 - aeroplane
 						.getRollDeg());
-				System.out.println("Pitch Degree is: "
-						+ aeroplane.getPitchDeg());
+				// System.out.println("Pitch Degree is: "
+				// + aeroplane.getPitchDeg());
 				elevator = (float) pitchDegsControl.getResult(0 - aeroplane
 						.getPitchDeg());
 
@@ -99,11 +98,21 @@ public class TakingOff extends AutoPilot {
 
 			}
 
-			writeCount++;
-			if (writeCount > 15) {
-				KMLFileWritter.writeToFile(aeroplane.getLatitude(), aeroplane.getLongitude());
-				writeCount = 0;
+			System.out
+					.println("current speed is: " + aeroplane.getAirSpeedKt());
+			System.out.println("current height is: "
+					+ aeroplane.getAltitudeFt());
+
+			if (isLogging) {
+				writeCount++;
+				if (writeCount > 15) {
+					KMLFileWritter.writeToFile(aeroplane.getLatitude(),
+							aeroplane.getLongitude());
+					writeCount = 0;
+				}
 			}
+			
+			/* Send Flight Control Command to Aircraft */
 			sendCommand();
 
 		}
