@@ -6,6 +6,7 @@ import sim.controller.GroundHeadingControl;
 import sim.controller.PitchDegsControl;
 import sim.controller.RollDegsControl;
 import sim.controller.YawDegsControl;
+import sim.utils.KMLFileWritter;
 
 public class TakingOff extends AutoPilot {
 
@@ -13,6 +14,7 @@ public class TakingOff extends AutoPilot {
 	private RollDegsControl rollDegsControl;
 	private YawDegsControl yawDegsControl;
 	private PitchDegsControl pitchDegsControl;
+	private static int writeCount = 0;
 
 	/* stage control */
 	boolean stage1 = true; /* gears leave ground */
@@ -97,29 +99,11 @@ public class TakingOff extends AutoPilot {
 
 			}
 
-			// System.out.println("throttle is: " + this.throttle);
-			// System.out.println("current heading is: " +
-			// aeroplane.getHeadingDeg());
-			// System.out.println("current desired heading is: " +
-			// airport.direction);
-			// System.out.println("rudder is: " + this.rudder);
-			// System.out.println("aileron is: " + this.aileron);
-			// System.out.println("elevator is: " + this.elevator);
-			// System.out.println("brakingParking is: " + this.brakeParking);
-			/*
-			 * System.out.println("current speed is: " +
-			 * aeroplane.getGroundSpeedKt());
-			 * System.out.println("current height is: " +
-			 * aeroplane.getAltitudeAglFt());
-			 */
-			/*
-			 * System.out.println("current roll degree speed is: " +
-			 * aeroplane.getRollRateDegps());
-			 * System.out.println("current roll degree is: " +
-			 * aeroplane.getRollDeg());
-			 */
-
-			System.out.println("Speed is: " + aeroplane.getGroundSpeedKt());
+			writeCount++;
+			if (writeCount > 15) {
+				KMLFileWritter.writeToFile(aeroplane.getLatitude(), aeroplane.getLongitude());
+				writeCount = 0;
+			}
 			sendCommand();
 
 		}
