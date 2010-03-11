@@ -1,7 +1,5 @@
 package sim.utils;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /* 
  * Using WGS84 Ellipsoid Earth Model
@@ -9,14 +7,7 @@ import java.util.List;
  * Author: Ye Fan
  */
 
-public class GlideSlope {
-
-	public static List<Waypoint> generateGlideSlopeWaypointList() {
-
-		List<Waypoint> glideSlopeWaypointList = new ArrayList<Waypoint>();
-
-		return glideSlopeWaypointList;
-	}
+public class GlideSlopeUtils {
 
 	public static Waypoint generateWaypointByDistanceAndBearing(
 			double latitude, double longitude, double distance, double bearing) {
