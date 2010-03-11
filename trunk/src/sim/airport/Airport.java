@@ -12,9 +12,9 @@ public abstract class Airport {
 	private Waypoint runwayStartingPoint;
 	private Waypoint runwayEndingPoint;
 	private double landingPointAltitude;
-	private static double GLIDESLOPEINDEX [] = {50, 100, 200, 300, 400, 500, 700, 900, 1100, 1300, 1500, 1700, 2100, 2500, 3000};
+	private static double GLIDESLOPEINDEX [] = {3000, 2500, 2100, 1700, 1500, 1300, 1100, 900, 700, 500, 400, 300, 200, 100, 50};
 	private static double GLIDESLOPETANGENT = 0.09;
-	private static double GLIDESLOPEPOINTRAIUSCONST = 1.0/15;
+	private static double GLIDESLOPEPOINTRAIUSCONST = 1.0 / 18;
 	
 	public void setRunwayDirection(double direction) {
 		this.runwayDirection = direction;
@@ -59,15 +59,22 @@ public abstract class Airport {
 		
 		double latitude = runwayStartingPoint.getLatitude();
 		double longitude = runwayStartingPoint.getLongitude();
+		double prevDistance = 0;
+		double dDistance = 0;
 		
 		for (double distance: GLIDESLOPEINDEX) {
+			dDistance = distance - prevDistance;
 			Waypoint waypoint = GlideSlopeUtils.generateWaypointByDistanceAndBearing(latitude, longitude, distance, bearing);
 			waypoint.setHeight(distance * GLIDESLOPETANGENT);
-			waypoint.setApproachRadius(distance * GLIDESLOPEPOINTRAIUSCONST);
+			waypoint.setApproachRadius(dDistance * GLIDESLOPEPOINTRAIUSCONST);
+			prevDistance = distance;
 			
 			glideSlope.add(waypoint);
 		}
 		
+		glideSlope.add(new Waypoint("Roll_Out", latitude, longitude, 2));
+		glideSlope.add(new Waypoint("Runway_End", runwayEndingPoint.getLatitude(), runwayEndingPoint.getLongitude(), 2));
+	
 		return glideSlope;
 	}
 }
