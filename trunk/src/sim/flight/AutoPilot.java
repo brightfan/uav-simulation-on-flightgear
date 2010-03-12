@@ -78,5 +78,9 @@ public abstract class AutoPilot {
 		}
 	}
 	
+	public void stopTransferring() {
+		clientSocket.close();
+	}
+	
 	public abstract void autoPilot();
 }

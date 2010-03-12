@@ -64,7 +64,7 @@ public class KMLFileWritter {
 		
 		while (true) {
 			writeToFile((float) lat1, (float) lon1);
-			Waypoint wp = GlideSlope.generateWaypointByDistanceAndBearing(lat1,
+			Waypoint wp = GlideSlopeUtils.generateWaypointByDistanceAndBearing(lat1,
 					lon1, 30, 298);
 			lat1 = wp.getLatitude();
 			lon1 = wp.getLongitude();
