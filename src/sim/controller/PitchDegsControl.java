@@ -14,7 +14,7 @@ public class PitchDegsControl extends PIDBase{
 		//accumulateError(trimmedError);
 		accumulateError(error);
 		
-		double result =  KP * error + KI * accumulatedError;
+		double result =  KP * error;// + KI * accumulatedError;
 		//double result = KP * error;
 		
 		//System.out.println("P is : " + error);
@@ -28,7 +28,7 @@ public class PitchDegsControl extends PIDBase{
 			result = - 0.5;
 		}
 		
-		if (Math.abs(error) > 1.5)
+		if (Math.abs(error) > 0.05)
 			return - result;
 		else
 			return 0;

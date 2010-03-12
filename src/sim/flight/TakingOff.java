@@ -10,6 +10,7 @@ import sim.utils.KMLFileWritter;
 
 public class TakingOff extends AutoPilot {
 
+	/* flight controls */
 	private GroundHeadingControl groundHeadingControl;
 	private RollDegsControl rollDegsControl;
 	private YawDegsControl yawDegsControl;
@@ -30,7 +31,7 @@ public class TakingOff extends AutoPilot {
 
 	@Override
 	public void autoPilot() {
-		while (true) {
+		while (!stage3) {
 			aeroplane.readStatus();
 
 			if (stage1) {
@@ -102,6 +103,9 @@ public class TakingOff extends AutoPilot {
 					.println("current speed is: " + aeroplane.getAirSpeedKt());
 			System.out.println("current height is: "
 					+ aeroplane.getAltitudeFt());
+			System.out.println("current elevator is: " + elevator);
+			System.out.println("current pitch is: " + aeroplane.getPitchDeg());
+			
 
 			if (isLogging) {
 				writeCount++;
@@ -116,5 +120,7 @@ public class TakingOff extends AutoPilot {
 			sendCommand();
 
 		}
+		
+		stopTransferring();
 	}
 }
