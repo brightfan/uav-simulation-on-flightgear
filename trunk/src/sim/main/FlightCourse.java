@@ -18,4 +18,18 @@ public final class FlightCourse {
 		return flightCourse;
 		
 	}
+	
+	/* Attention: this debug course is for initiated point at
+	 *            -122.5006208, 37.67894147
+	 */
+	public static List<Waypoint> getDebugCourse() {
+		List<Waypoint> flightCourse = new ArrayList<Waypoint>();
+		
+		flightCourse.add(new Waypoint("1", 37.6915856, -122.5306811, 250, 1000));
+		flightCourse.add(new Waypoint("2", 37.653111385018036, -122.53386497497559, 250, 1000));
+		flightCourse.add(new Waypoint("3", 37.645975852090025, -122.50863075256348, 250, 1000));
+		flightCourse.add(new Waypoint("4", 37.67894147, -122.5006208, 250, 1000));
+		
+		return flightCourse;
+	}
 }
