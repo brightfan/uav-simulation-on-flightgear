@@ -10,7 +10,7 @@ import sim.globalvalue.GlobalValue;
 
 public class MainLoop {
 
-	private static boolean isDebugging;
+	public static boolean isDebugging;
 	private static int debugMode = 0;
 
 	public static void main(String[] args) {
