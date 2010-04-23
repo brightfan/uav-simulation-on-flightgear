@@ -28,4 +28,8 @@ public class Direction {
 	
 		return direction;
 	}
+	
+	public static void main(String [] args) {
+		System.out.println(getDirection(37.67894147, -122.5006208, 37.68032205, -122.50828743));
+	}
 }

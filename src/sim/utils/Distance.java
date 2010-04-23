@@ -31,4 +31,8 @@ public class Distance {
 					* Math.cos(radiansLong1 - radiansLong2)) * 1000;
 		}
 	}
+	
+	public static void main(String [] args) {
+		System.out.println(getDistance(37.67894147, -122.5006208, 37.68032205, -122.50828743));
+	}
 }
