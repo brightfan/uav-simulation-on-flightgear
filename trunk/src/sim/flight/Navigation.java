@@ -134,14 +134,10 @@ public class Navigation extends AutoPilot {
 				System.out.println("Current Heading: " + aeroplane.getHeadingDeg());
 				System.out.println("Desired Heading: " + desiredHeadingDirection);
 				System.out.println("Distance left: " + distance);
-			}
-
-			if (isLogging) {
-				writeCount++;
-				if (writeCount > 15) {
+				
+				if (isLogging) {
 					KMLFileWritter.writeToFile(aeroplane.getLatitude(),
 							aeroplane.getLongitude());
-					writeCount = 0;
 				}
 			}
 

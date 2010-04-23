@@ -99,28 +99,28 @@ public class TakingOff extends AutoPilot {
 
 			}
 
-			System.out
-					.println("current speed is: " + aeroplane.getAirSpeedKt());
-			System.out.println("current height is: "
-					+ aeroplane.getAltitudeFt());
-			System.out.println("current elevator is: " + elevator);
-			System.out.println("current pitch is: " + aeroplane.getPitchDeg());
-			
+			logToCommandLine();
 
-			if (isLogging) {
-				writeCount++;
-				if (writeCount > 15) {
-					KMLFileWritter.writeToFile(aeroplane.getLatitude(),
-							aeroplane.getLongitude());
-					writeCount = 0;
-				}
+			if (commandlineLogCounter == ONESECONDCOUNTER) {
+
+				System.out.println("current speed is: "
+						+ aeroplane.getAirSpeedKt());
+				System.out.println("current height is: "
+						+ aeroplane.getAltitudeFt());
+				System.out.println("current elevator is: " + elevator);
+				System.out.println("current pitch is: "
+						+ aeroplane.getPitchDeg());
+
+				KMLFileWritter.writeToFile(aeroplane.getLatitude(), aeroplane
+						.getLongitude());
+
 			}
-			
+
 			/* Send Flight Control Command to Aircraft */
 			sendCommand();
 
 		}
-		
+
 		stopTransferring();
 	}
 }

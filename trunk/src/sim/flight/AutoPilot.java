@@ -29,7 +29,6 @@ public abstract class AutoPilot {
 
 	/* logger */
 	protected static boolean isLogging = false;
-	protected static int writeCount = 0;
 	protected static int commandlineLogCounter = 0;
 	protected static final int ONESECONDCOUNTER = 40;
 
@@ -89,18 +88,6 @@ public abstract class AutoPilot {
 
 	public void logToCommandLine() {
 		if (commandlineLogCounter == ONESECONDCOUNTER) {
-			/*System.out.println("current heading is: "
-					+ aeroplane.getHeadingDeg());
-			System.out
-					.println("current speed is: " + aeroplane.getAirSpeedKt());
-			System.out.println("current throttle is: " + throttle);
-
-			System.out.println("current elevator is: " + elevator);
-
-			System.out.println("current pitch is: " + aeroplane.getPitchDeg());
-			System.out.println("current pitch dev is: "
-					+ aeroplane.getPitchRateDegps());
-			System.out.println("current aileron is: " + aileron);*/
 			commandlineLogCounter = 0;
 		}
 		commandlineLogCounter++;
