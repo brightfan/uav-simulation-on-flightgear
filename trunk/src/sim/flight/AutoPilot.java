@@ -26,10 +26,12 @@ public abstract class AutoPilot {
 	InetAddress IPAddress;
 	private int outPort;
 	private byte[] sendBuffer = new byte[200];
-	
+
 	/* logger */
 	protected static boolean isLogging = false;
 	protected static int writeCount = 0;
+	protected static int commandlineLogCounter = 0;
+	protected static final int ONESECONDCOUNTER = 40;
 
 	private boolean isInitiated;
 
@@ -57,8 +59,9 @@ public abstract class AutoPilot {
 	}
 
 	public boolean sendCommand() {
-		sendBuffer = new String(throttle+"\t"+rudder+"\t"+aileron+"\t"+elevator+"\t"+brakeParking+"\n").getBytes();
-		
+		sendBuffer = new String(throttle + "\t" + rudder + "\t" + aileron
+				+ "\t" + elevator + "\t" + brakeParking + "\n").getBytes();
+
 		DatagramPacket sendPacket = new DatagramPacket(sendBuffer,
 				sendBuffer.length, IPAddress, outPort);
 
@@ -77,10 +80,29 @@ public abstract class AutoPilot {
 			autoPilot();
 		}
 	}
-	
+
 	public void stopTransferring() {
 		clientSocket.close();
 	}
-	
+
 	public abstract void autoPilot();
+
+	public void logToCommandLine() {
+		if (commandlineLogCounter == ONESECONDCOUNTER) {
+			/*System.out.println("current heading is: "
+					+ aeroplane.getHeadingDeg());
+			System.out
+					.println("current speed is: " + aeroplane.getAirSpeedKt());
+			System.out.println("current throttle is: " + throttle);
+
+			System.out.println("current elevator is: " + elevator);
+
+			System.out.println("current pitch is: " + aeroplane.getPitchDeg());
+			System.out.println("current pitch dev is: "
+					+ aeroplane.getPitchRateDegps());
+			System.out.println("current aileron is: " + aileron);*/
+			commandlineLogCounter = 0;
+		}
+		commandlineLogCounter++;
+	}
 }
