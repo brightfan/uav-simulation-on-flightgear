@@ -22,8 +22,6 @@ public class Navigation extends AutoPilot {
 	private PitchDegsControl pitchDegsControl;
 	private AirborneSpeedControl airborneSpeedControl;
 
-	private double navigationHeight = 600;
-
 	private List<Waypoint> flightCourse;
 	private int currentHeadingWaypointIndex;
 
@@ -46,8 +44,17 @@ public class Navigation extends AutoPilot {
 		System.out.println("********** Entered Navigation Mode! ***********");
 	}
 
+	public Navigation(Aeroplane aeroplane, Airport airport,
+			RollDegsControl rollDegsControl, PitchDegsControl pitchDegsControl,
+			AirborneSpeedControl airborneSpeedControl) {
+		this(aeroplane, airport);
+		this.rollDegsControl = rollDegsControl;
+		this.pitchDegsControl = pitchDegsControl;
+		this.airborneSpeedControl = airborneSpeedControl;
+	}
+
 	@Override
-	public void autoPilot() {
+	public AutoPilot autoPilot() {
 		while (true) {
 			aeroplane.readStatus();
 
@@ -58,9 +65,10 @@ public class Navigation extends AutoPilot {
 
 			/* Whether Arrived Way Point? */
 			double distance = Distance.getDistance(aeroplane.getLatitude(),
-					                               aeroplane.getLongitude(),
-					                               flightCourse.get(currentHeadingWaypointIndex).getLatitude(),
-					                               flightCourse.get(currentHeadingWaypointIndex).getLongitude());
+					aeroplane.getLongitude(), flightCourse.get(
+							currentHeadingWaypointIndex).getLatitude(),
+					flightCourse.get(currentHeadingWaypointIndex)
+							.getLongitude());
 			if (distance < flightCourse.get(currentHeadingWaypointIndex)
 					.getApproachRadius()) {
 				/* Arrived Desired Way Point */
@@ -76,11 +84,10 @@ public class Navigation extends AutoPilot {
 				}
 			}
 
-			double desiredHeadingDirection = Direction
-					.getDirection(aeroplane.getLatitude(),
-						          aeroplane.getLongitude(),
-								  flightCourse.get(currentHeadingWaypointIndex).getLatitude(), 
-								  flightCourse.get(currentHeadingWaypointIndex).getLongitude());
+			double desiredHeadingDirection = Direction.getDirection(aeroplane
+					.getLatitude(), aeroplane.getLongitude(), flightCourse.get(
+					currentHeadingWaypointIndex).getLatitude(), flightCourse
+					.get(currentHeadingWaypointIndex).getLongitude());
 
 			double directionError = DirectionError.getError(aeroplane
 					.getHeadingDeg(), desiredHeadingDirection);
@@ -126,15 +133,20 @@ public class Navigation extends AutoPilot {
 				 */
 
 				/* FOR THROTTLE DEBUG */
-				/*System.out.println("Gound Speed: "
-						+ aeroplane.getGroundSpeedKt());*/
-				
-				/* FOR COURSE DEBUG*/
-				System.out.println("Next Waypoint is the: " + currentHeadingWaypointIndex + "th");
-				System.out.println("Current Heading: " + aeroplane.getHeadingDeg());
-				System.out.println("Desired Heading: " + desiredHeadingDirection);
+				/*
+				 * System.out.println("Gound Speed: " +
+				 * aeroplane.getGroundSpeedKt());
+				 */
+
+				/* FOR COURSE DEBUG */
+				System.out.println("Next Waypoint is the: "
+						+ currentHeadingWaypointIndex + "th");
+				System.out.println("Current Heading: "
+						+ aeroplane.getHeadingDeg());
+				System.out.println("Desired Heading: "
+						+ desiredHeadingDirection);
 				System.out.println("Distance left: " + distance);
-				
+
 				if (isLogging) {
 					KMLFileWritter.writeToFile(aeroplane.getLatitude(),
 							aeroplane.getLongitude());

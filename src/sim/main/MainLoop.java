@@ -20,8 +20,8 @@ public class MainLoop {
 		aeroplane.setTakeoffSpeed((float) 73.5);
 		Airport airport = new KSFO();
 
-		isDebugging = true;
-		debugMode = 2;
+		isDebugging = false;
+		debugMode = 1;
 
 		if (isDebugging) {
 			switch (debugMode) {
@@ -49,7 +49,13 @@ public class MainLoop {
 			}
 		}
 		else {
-			// TO DO: Real Navigating Code comes here.
+			AutoPilot takeOff = new TakingOff(aeroplane, airport);
+			takeOff.initiateConnection(GlobalValue.destRawIP,
+					GlobalValue.outPort);
+			AutoPilot navigation = takeOff.autoPilot();
+			navigation.initiateConnection(GlobalValue.destRawIP,
+					GlobalValue.outPort);
+			navigation.autoPilot();
 		}
 	}
 }
