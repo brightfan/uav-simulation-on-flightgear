@@ -66,7 +66,7 @@ public class TakingOff extends AutoPilot {
 			}
 
 			if (stage2) {
-				if (aeroplane.getAltitudeAglFt() > 600) {
+				if (aeroplane.getAltitudeAglFt() > navigationHeight) {
 					stage1 = false;
 					stage2 = false;
 					stage3 = true;

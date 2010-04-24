@@ -72,8 +72,8 @@ public class Navigation extends AutoPilot {
 			if (distance < flightCourse.get(currentHeadingWaypointIndex)
 					.getApproachRadius()) {
 				/* Arrived Desired Way Point */
-				System.out.println("i'm here");
 				currentHeadingWaypointIndex++;
+				navigationHeight = flightCourse.get(currentHeadingWaypointIndex).getHeight();
 
 				if (MainLoop.isDebugging) {
 					currentHeadingWaypointIndex %= flightCourse.size();
@@ -102,6 +102,13 @@ public class Navigation extends AutoPilot {
 			double desiredPitch;
 			desiredPitch = (1 / (Math.pow(1.05,
 					-(navigationHeight - currentHeight)) + 1) - 0.5) * 60;
+			
+			if (desiredPitch > 8) {
+				desiredPitch = 8;
+			}
+			else if (desiredPitch < -8) {
+				desiredPitch = -8;
+			}
 
 			elevator = (float) pitchDegsControl.getResult(aeroplane
 					.getPitchDeg()
@@ -141,6 +148,7 @@ public class Navigation extends AutoPilot {
 				/* FOR COURSE DEBUG */
 				System.out.println("Next Waypoint is the: "
 						+ currentHeadingWaypointIndex + "th");
+				System.out.println("Desired Height: " + navigationHeight);
 				System.out.println("Current Heading: "
 						+ aeroplane.getHeadingDeg());
 				System.out.println("Desired Heading: "
