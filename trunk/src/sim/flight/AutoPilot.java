@@ -13,6 +13,8 @@ import sim.airport.Airport;
 public abstract class AutoPilot {
 	protected Aeroplane aeroplane;
 	protected Airport airport;
+	/* Constant Control Parameter */
+	protected double navigationHeight = 600;
 
 	/* flight control parameters */
 	protected float throttle;
@@ -84,7 +86,7 @@ public abstract class AutoPilot {
 		clientSocket.close();
 	}
 
-	public abstract void autoPilot();
+	public abstract AutoPilot autoPilot();
 
 	public void logToCommandLine() {
 		if (commandlineLogCounter == ONESECONDCOUNTER) {
