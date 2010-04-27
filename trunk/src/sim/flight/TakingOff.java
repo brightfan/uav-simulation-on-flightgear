@@ -114,7 +114,7 @@ public class TakingOff extends AutoPilot {
 						- desiredPitch, aeroplane.getPitchRateDegps());
 
 				throttle = (float) airborneSpeedControl
-						.getResult(100 - aeroplane.getGroundSpeedKt());
+						.getResult(navigationSpeed - aeroplane.getGroundSpeedKt());
 
 				rudder = (float) 0;
 				aileron += (float) 0.006;

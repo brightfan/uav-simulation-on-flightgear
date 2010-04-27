@@ -2,7 +2,7 @@ package sim.utils;
 
 public class Waypoint {
 	private String id;
-	private double latitude, longitude, approachRadius, height;
+	private double latitude, longitude, approachRadius, height, speedLimit;
 	
 	public Waypoint() {
 		; // nothing to do
@@ -23,6 +23,12 @@ public class Waypoint {
 		this.longitude = longitude;
 		this.approachRadius = approachRadius;
 		this.height= height;
+	}
+	
+	public Waypoint(String id, double latitude, 
+			double longitude, double approachRadius, double height, double speedLimit) {
+		this(id, latitude, longitude, approachRadius, height);
+		this.speedLimit = speedLimit;
 	}
 	
 	/* Please make sure to pass in an array with 5 or more elements */
@@ -90,6 +96,14 @@ public class Waypoint {
 	
 	@Override
 	public String toString() {
-		return String.format("[%s, %f, %f, %f, %f]", id, latitude, longitude, approachRadius, height);
+		return String.format("[%s, %f, %f, %f, %f, %f]", id, latitude, longitude, approachRadius, height, speedLimit);
+	}
+
+	public double getSpeedLimit() {
+		return speedLimit;
+	}
+
+	public void setSpeedLimit(double speedLimit) {
+		this.speedLimit = speedLimit;
 	}
 }

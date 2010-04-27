@@ -15,6 +15,7 @@ public abstract class AutoPilot {
 	protected Airport airport;
 	/* Constant Control Parameter */
 	protected double navigationHeight = 1000;
+	protected double navigationSpeed = 100;
 
 	/* flight control parameters */
 	protected float throttle;

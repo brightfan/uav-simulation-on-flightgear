@@ -4,6 +4,8 @@ import sim.aircraft.Aeroplane;
 import sim.airport.Airport;
 import sim.airport.KSFO;
 import sim.flight.AutoPilot;
+import sim.flight.Landing;
+import sim.flight.LandingEnhanced;
 import sim.flight.Navigation;
 import sim.flight.TakingOff;
 import sim.globalvalue.GlobalValue;
@@ -20,8 +22,8 @@ public class MainLoop {
 		aeroplane.setTakeoffSpeed((float) 73.5);
 		Airport airport = new KSFO();
 
-		isDebugging = false;
-		debugMode = 1;
+		isDebugging = true;
+		debugMode = 4;
 
 		if (isDebugging) {
 			switch (debugMode) {
@@ -40,7 +42,17 @@ public class MainLoop {
 				break;
 
 			case 3:
-				System.out.println("Debug mode 3 is not activated yet");
+				autoPilot = new Landing(aeroplane, airport);
+				autoPilot.initiateConnection(GlobalValue.destRawIP,
+						GlobalValue.outPort);
+				autoPilot.autoPilot();
+				break;
+				
+			case 4:
+				autoPilot = new LandingEnhanced(aeroplane, airport);
+				autoPilot.initiateConnection(GlobalValue.destRawIP,
+						GlobalValue.outPort);
+				autoPilot.autoPilot();
 				break;
 
 			default:

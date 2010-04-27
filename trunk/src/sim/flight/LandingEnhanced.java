@@ -10,6 +10,7 @@ import sim.controller.PitchDegsControl;
 import sim.controller.RollDegsControl;
 import sim.controller.YawDegsControl;
 import sim.main.MainLoop;
+import sim.utils.Constants;
 import sim.utils.Constraint;
 import sim.utils.Direction;
 import sim.utils.DirectionError;
@@ -17,7 +18,7 @@ import sim.utils.Distance;
 import sim.utils.KMLFileWritter;
 import sim.utils.Waypoint;
 
-public class Landing extends AutoPilot {
+public class LandingEnhanced extends AutoPilot {
 	/* flight controller */
 	// private GroundHeadingControl groundHeadingControl;
 	private RollDegsControl rollDegsControl;
@@ -28,14 +29,17 @@ public class Landing extends AutoPilot {
 	private List<Waypoint> glideSlopeWaypoints;
 	private int currentGlideSlopeWPIndex;
 
-	private boolean fixPitch = false;
+	private boolean startingRollOut = false;
+	private boolean hasRolledOut = false;
+	
+	private double previousDistance = 100000;
 
-	public Landing(Aeroplane aeroplane, Airport airport) {
+	public LandingEnhanced(Aeroplane aeroplane, Airport airport) {
 		super(aeroplane, airport);
 		// groundHeadingControl = new GroundHeadingControl(0.2, 0.005, 10.0);
 		rollDegsControl = new RollDegsControl(0.0333, 0.0002, 0.0);
-		yawDegsControl = new YawDegsControl(0.06, 0.0000, 0.0);
-		pitchDegsControl = new PitchDegsControl(0.06, 0.0, 0.0);
+		yawDegsControl = new YawDegsControl(0.06, 0.00005, 0.0);
+		pitchDegsControl = new PitchDegsControl(0.08, 0.001, 0.01);
 		airborneSpeedControl = new AirborneSpeedControl(0.03, 0.0001, 0.0);
 
 		glideSlopeWaypoints = airport.getGlideSlope();
@@ -44,8 +48,7 @@ public class Landing extends AutoPilot {
 		if (MainLoop.isDebugging) {
 			navigationHeight = 1000;
 			navigationSpeed = 100;
-			// glideSlopeWaypoints.add(0, new Waypoint("5", 37.5535998,
-			// -122.3049914, 200, 1000, 100));
+			glideSlopeWaypoints.add(0, new Waypoint("5", 37.5754747, -122.2916205, 300, 1000, 100));
 		}
 
 		System.out
@@ -62,16 +65,23 @@ public class Landing extends AutoPilot {
 							currentGlideSlopeWPIndex).getLatitude(),
 					glideSlopeWaypoints.get(currentGlideSlopeWPIndex)
 							.getLongitude());
+			if (previousDistance < distance) {
+				currentGlideSlopeWPIndex++;
+				previousDistance = 100000;
+			}
+			else {
+				previousDistance = distance;
+			}
 			if (distance < glideSlopeWaypoints.get(currentGlideSlopeWPIndex)
 					.getApproachRadius()) {
 				/* Arrived Desired Way Point */
 				currentGlideSlopeWPIndex++;
 
-				if ((glideSlopeWaypoints.size() - currentGlideSlopeWPIndex) >= 8) {
+				if ((glideSlopeWaypoints.size() - currentGlideSlopeWPIndex) >= 1) {
 					navigationHeight = glideSlopeWaypoints.get(
 							currentGlideSlopeWPIndex).getHeight();
 				} else {
-					fixPitch = true;
+					startingRollOut = true;
 				}
 
 				if ((glideSlopeWaypoints.size() - currentGlideSlopeWPIndex) == 8) {
@@ -89,7 +99,7 @@ public class Landing extends AutoPilot {
 							.getLatitude(), glideSlopeWaypoints.get(
 							currentGlideSlopeWPIndex).getLongitude());
 
-			if (currentGlideSlopeWPIndex <= 3) {
+			if (currentGlideSlopeWPIndex <= 6) {
 				double directionError = DirectionError.getError(aeroplane
 						.getHeadingDeg(), desiredHeadingDirection);
 				directionError = DirectionError.constrainError(directionError);
@@ -109,15 +119,35 @@ public class Landing extends AutoPilot {
 
 			double currentHeight = aeroplane.getAltitudeFt();
 			double desiredPitch = 0;
+			double dropingRate = aeroplane.getVerticalSpeedFps(); /* Unit is Feet Per Second */
+			double distanceToRollOut = 0;
 
-			if (!fixPitch) {
+			if (!startingRollOut) {
+				distanceToRollOut = Distance.getDistance(airport.getRunwayStartingPoint().getLatitude(),
+														airport.getRunwayStartingPoint().getLongitude(),
+														aeroplane.getLatitude(),
+														aeroplane.getLongitude());
+				double desiredHeight = (distanceToRollOut * Airport.GLIDESLOPETANGENT / Constants.FOOTTOMETER + airport.getLandHeight());
+				double desiredSpeed = 70 + 35.0/3000 * distanceToRollOut;
+				if (desiredHeight > 1000) {
+					; //navigation height remains
+				}
+				else {
+					navigationHeight = desiredHeight;
+				}
+				if (desiredSpeed> 100) {
+					; //navigation speed remains
+				}
+				else {
+					navigationSpeed = desiredSpeed;
+				}
 				desiredPitch = (1 / (Math.pow(1.05,
 						-(navigationHeight - currentHeight)) + 1) - 0.5) * 60;
 
 				if (currentGlideSlopeWPIndex <= 3) {
 					desiredPitch = Constraint.constraint(desiredPitch, 4, -4);
 				} else {
-					desiredPitch = Constraint.constraint(desiredPitch, 3, -3);
+					desiredPitch = Constraint.constraint(desiredPitch, 4, -4);
 				}
 				elevator = (float) pitchDegsControl.getResult(aeroplane
 						.getPitchDeg()
@@ -125,12 +155,20 @@ public class Landing extends AutoPilot {
 
 				elevator = (float) Constraint.constraint(elevator, 0.4, -0.4);
 			} else {
-				desiredPitch = 4.0;
+				//desiredPitch = 4.0;
+				desiredPitch = 0.5 * (-6.0 - dropingRate);
+				if (desiredPitch > 4.0) {
+					desiredPitch = 4.0;
+				}
 				elevator = (float) pitchDegsControl.getResult(aeroplane
 						.getPitchDeg()
 						- desiredPitch, aeroplane.getPitchRateDegps());
 
 				elevator = (float) Constraint.constraint(elevator, 0.4, -0.4);
+			}
+			
+			if ((currentGlideSlopeWPIndex > glideSlopeWaypoints.size() - 3) && (Math.abs(dropingRate) < 1) && (!hasRolledOut)) {
+				hasRolledOut = true;
 			}
 
 			throttle = (float) airborneSpeedControl.getResult(navigationSpeed
@@ -138,7 +176,12 @@ public class Landing extends AutoPilot {
 
 			// rudder = (float) 0;
 			//aileron += (float) 0.006;
-			brakeParking = 1;
+			if (hasRolledOut) {
+				brakeParking = 1;
+			}
+			else {
+				brakeParking = 0;
+			}
 
 			logToCommandLine();
 
@@ -173,6 +216,7 @@ public class Landing extends AutoPilot {
 				System.out.println("Desired Heading: "
 						+ desiredHeadingDirection);
 				System.out.println("Distance left: " + distance);
+				System.out.println("Droping rate is: " + dropingRate);
 
 				if (isLogging) {
 					KMLFileWritter.writeToFile(aeroplane.getLatitude(),
