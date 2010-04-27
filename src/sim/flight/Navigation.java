@@ -114,7 +114,7 @@ public class Navigation extends AutoPilot {
 					.getPitchDeg()
 					- desiredPitch, aeroplane.getPitchRateDegps());
 
-			throttle = (float) airborneSpeedControl.getResult(100 - aeroplane
+			throttle = (float) airborneSpeedControl.getResult(navigationSpeed - aeroplane
 					.getGroundSpeedKt());
 
 			rudder = (float) 0;
