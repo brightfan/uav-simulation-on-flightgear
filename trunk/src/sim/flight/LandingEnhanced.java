@@ -33,7 +33,6 @@ public class LandingEnhanced extends AutoPilot {
 
 	private double previousDistance = 100000;
 	private int skipCounter = 0;
-	private boolean waypointUpdated = false;
 
 	private boolean deleteDebugWaypoint = false;
 
@@ -42,7 +41,7 @@ public class LandingEnhanced extends AutoPilot {
 		// groundHeadingControl = new GroundHeadingControl(0.2, 0.005, 10.0);
 		rollDegsControl = new RollDegsControl(0.0333, 0.0002, 0.0);
 		yawDegsControl = new YawDegsControl(0.06, 0.00000, 0.0);
-		pitchDegsControl = new PitchDegsControl(0.08, 0.001, 0.01);
+		pitchDegsControl = new PitchDegsControl(0.08, 0.0001, 0.01);
 		airborneSpeedControl = new AirborneSpeedControl(0.03, 0.0001, 0.0);
 
 		glideSlopeWaypoints = airport.getGlideSlope();
@@ -54,6 +53,24 @@ public class LandingEnhanced extends AutoPilot {
 			glideSlopeWaypoints.add(0, new Waypoint("5", 37.5754747,
 					-122.2916205, 300, 1000, 100));
 		}
+
+		System.out
+				.println("********** Landing Module Takes Control ***********");
+	}
+
+	public LandingEnhanced(Aeroplane aeroplane, Airport airport,
+			RollDegsControl rollDegsControl,
+			AirborneSpeedControl airbournSpeedControl) {
+		super(aeroplane, airport);
+		// groundHeadingControl = new GroundHeadingControl(0.2, 0.005, 10.0);
+		this.rollDegsControl = rollDegsControl;
+		this.airborneSpeedControl = airbournSpeedControl;
+
+		this.yawDegsControl = new YawDegsControl(0.06, 0.00000, 0.0);
+		this.pitchDegsControl = new PitchDegsControl(0.08, 0.0001, 0.01);
+
+		glideSlopeWaypoints = airport.getGlideSlope();
+		currentGlideSlopeWPIndex = 0;
 
 		System.out
 				.println("********** Landing Module Takes Control ***********");
@@ -73,7 +90,7 @@ public class LandingEnhanced extends AutoPilot {
 			if ((previousDistance < distance) && (skipCounter > 20)) {
 				currentGlideSlopeWPIndex++;
 				if (currentGlideSlopeWPIndex > 2) {
-					//glideSlopeWaypoints = getNewGlideSlope();
+					// glideSlopeWaypoints = getNewGlideSlope();
 				}
 				previousDistance = 100000;
 				skipCounter = 0;
@@ -96,16 +113,16 @@ public class LandingEnhanced extends AutoPilot {
 				/* Arrived Desired Way Point */
 				currentGlideSlopeWPIndex++;
 
-				if ((glideSlopeWaypoints.size() - currentGlideSlopeWPIndex) >= 1) {
-					navigationHeight = glideSlopeWaypoints.get(
-							currentGlideSlopeWPIndex).getHeight();
-				} else {
-					startingRollOut = true;
-				}
+				/*
+				 * if ((glideSlopeWaypoints.size() - currentGlideSlopeWPIndex)
+				 * >= 1) { navigationHeight = glideSlopeWaypoints.get(
+				 * currentGlideSlopeWPIndex).getHeight(); } else {
+				 * startingRollOut = true; }
+				 */
 
 				navigationSpeed = glideSlopeWaypoints.get(
 						currentGlideSlopeWPIndex).getSpeedLimit();
-				
+
 				if ((currentGlideSlopeWPIndex > 0) && (!deleteDebugWaypoint)
 						&& (MainLoop.isDebugging)) {
 					glideSlopeWaypoints.remove(0);
@@ -113,9 +130,9 @@ public class LandingEnhanced extends AutoPilot {
 					currentGlideSlopeWPIndex--;
 					deleteDebugWaypoint = true;
 				}
-				
+
 				if (currentGlideSlopeWPIndex > 2) {
-					//glideSlopeWaypoints = getNewGlideSlope();
+					// glideSlopeWaypoints = getNewGlideSlope();
 				}
 			}
 
@@ -126,6 +143,7 @@ public class LandingEnhanced extends AutoPilot {
 							currentGlideSlopeWPIndex).getLongitude());
 
 			if (currentGlideSlopeWPIndex <= 6) {
+
 				double directionError = DirectionError.getError(aeroplane
 						.getHeadingDeg(), desiredHeadingDirection);
 				directionError = DirectionError.constrainError(directionError);
@@ -136,6 +154,12 @@ public class LandingEnhanced extends AutoPilot {
 				aileron = (float) rollDegsControl.getResult(desiredAileron
 						- aeroplane.getRollDeg());
 			} else {
+
+				if ((aeroplane.getAltitudeAglFt() < 70) && (!startingRollOut)) {
+					startingRollOut = true;
+					System.out.println("Preparing for touching ground!");
+				}
+
 				aileron = (float) rollDegsControl.getResult(0 - aeroplane
 						.getRollDeg());
 				rudder = (float) yawDegsControl
@@ -201,8 +225,11 @@ public class LandingEnhanced extends AutoPilot {
 				hasRolledOut = true;
 			}
 
+			// throttle = (float) airborneSpeedControl.getResult(navigationSpeed
+			// - aeroplane.getGroundSpeedKt());
+
 			throttle = (float) airborneSpeedControl.getResult(navigationSpeed
-					- aeroplane.getGroundSpeedKt());
+					- aeroplane.getAirSpeedKt());
 
 			// rudder = (float) 0;
 			// aileron += (float) 0.006;
@@ -272,12 +299,13 @@ public class LandingEnhanced extends AutoPilot {
 		} else {
 			isClockWise = false;
 		}
-		
+
 		if (isClockWise) {
-			System.out.println("********* new clockwise glide slope generated *********");
-		}
-		else {
-			System.out.println("********* new counter clockwise glide slope generated *********");
+			System.out
+					.println("********* new clockwise glide slope generated *********");
+		} else {
+			System.out
+					.println("********* new counter clockwise glide slope generated *********");
 		}
 
 		return airport.getRevisedGlideSlope(currentGlideSlopeWPIndex,

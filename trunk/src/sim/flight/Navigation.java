@@ -73,7 +73,6 @@ public class Navigation extends AutoPilot {
 					.getApproachRadius()) {
 				/* Arrived Desired Way Point */
 				currentHeadingWaypointIndex++;
-				navigationHeight = flightCourse.get(currentHeadingWaypointIndex).getHeight();
 
 				if (MainLoop.isDebugging) {
 					currentHeadingWaypointIndex %= flightCourse.size();
@@ -81,7 +80,12 @@ public class Navigation extends AutoPilot {
 
 				if (currentHeadingWaypointIndex == flightCourse.size()) {
 					/* Go to Landing Process */
+					return new LandingEnhanced(this.aeroplane, this.airport,
+							this.rollDegsControl, this.airborneSpeedControl);
 				}
+
+				navigationHeight = flightCourse
+						.get(currentHeadingWaypointIndex).getHeight();
 			}
 
 			double desiredHeadingDirection = Direction.getDirection(aeroplane
@@ -102,11 +106,10 @@ public class Navigation extends AutoPilot {
 			double desiredPitch;
 			desiredPitch = (1 / (Math.pow(1.05,
 					-(navigationHeight - currentHeight)) + 1) - 0.5) * 60;
-			
+
 			if (desiredPitch > 8) {
 				desiredPitch = 8;
-			}
-			else if (desiredPitch < -8) {
+			} else if (desiredPitch < -8) {
 				desiredPitch = -8;
 			}
 
@@ -114,8 +117,8 @@ public class Navigation extends AutoPilot {
 					.getPitchDeg()
 					- desiredPitch, aeroplane.getPitchRateDegps());
 
-			throttle = (float) airborneSpeedControl.getResult(navigationSpeed - aeroplane
-					.getGroundSpeedKt());
+			throttle = (float) airborneSpeedControl.getResult(navigationSpeed
+					- aeroplane.getGroundSpeedKt());
 
 			rudder = (float) 0;
 			aileron += (float) 0.006;

@@ -23,7 +23,7 @@ public class MainLoop {
 		/* new airport */
 		Airport airport = new KSFO();
 
-		isDebugging = true;
+		isDebugging = false;
 		debugMode = 4;
 
 		if (isDebugging) {
@@ -68,7 +68,10 @@ public class MainLoop {
 			AutoPilot navigation = takeOff.autoPilot();
 			navigation.initiateConnection(GlobalValue.destRawIP,
 					GlobalValue.outPort);
-			navigation.autoPilot();
+			AutoPilot landing = navigation.autoPilot();
+			landing.initiateConnection(GlobalValue.destRawIP,
+					GlobalValue.outPort);
+			landing.autoPilot();
 		}
 	}
 }
