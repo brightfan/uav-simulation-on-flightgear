@@ -13,8 +13,8 @@ public final class FlightCourse {
 		flightCourse.add(new Waypoint("1", 37.66452681, -122.4748992, 250, 1000));
 		flightCourse.add(new Waypoint("2", 37.61314357, -122.5164413, 250, 1000));
 		flightCourse.add(new Waypoint("3", 37.52851499, -122.4395370, 250, 1800));
-		flightCourse.add(new Waypoint("4", 37.52443079, -122.3228073, 250, 1900));
-		flightCourse.add(new Waypoint("5", 37.58567023, -122.2853851, 250, 1000));
+		flightCourse.add(new Waypoint("4", 37.52443079, -122.3228073, 250, 2000));
+		flightCourse.add(new Waypoint("5", 37.57547470, -122.2916205, 300, 1000));
 		return flightCourse;
 		
 	}
