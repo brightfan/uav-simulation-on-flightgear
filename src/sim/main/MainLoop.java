@@ -20,6 +20,7 @@ public class MainLoop {
 		/* new plane */
 		Aeroplane aeroplane = new Aeroplane(GlobalValue.inPort);
 		aeroplane.setTakeoffSpeed((float) 73.5);
+		/* new airport */
 		Airport airport = new KSFO();
 
 		isDebugging = true;
