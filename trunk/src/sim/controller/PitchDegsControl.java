@@ -2,6 +2,7 @@ package sim.controller;
 
 
 public class PitchDegsControl extends PIDBase{
+	public static double AMP_COEFFICIENT = 60;
 	
 	public PitchDegsControl(double KP, double KI, double KD) {
 		super(KP, KI, KD);

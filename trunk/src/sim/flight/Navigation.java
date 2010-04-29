@@ -97,7 +97,8 @@ public class Navigation extends AutoPilot {
 					.getHeadingDeg(), desiredHeadingDirection);
 			directionError = DirectionError.constrainError(directionError);
 
-			double desiredAileron = Math.sin(Math.toRadians(directionError)) * 30;
+			double desiredAileron = Math.sin(Math.toRadians(directionError))
+					* RollDegsControl.DEGS_AMP_COEFFICIENT;
 
 			aileron = (float) rollDegsControl.getResult(desiredAileron
 					- aeroplane.getRollDeg());
@@ -105,7 +106,8 @@ public class Navigation extends AutoPilot {
 			double currentHeight = aeroplane.getAltitudeFt();
 			double desiredPitch;
 			desiredPitch = (1 / (Math.pow(1.05,
-					-(navigationHeight - currentHeight)) + 1) - 0.5) * 60;
+					-(navigationHeight - currentHeight)) + 1) - 0.5)
+					* PitchDegsControl.AMP_COEFFICIENT;
 
 			if (desiredPitch > 8) {
 				desiredPitch = 8;

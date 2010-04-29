@@ -2,6 +2,8 @@ package sim.controller;
 
 
 public class RollDegsControl extends PIDBase{
+	public static double AMP_COEFFICIENT = 2.5;
+	public static double DEGS_AMP_COEFFICIENT = 30;
 
 	public RollDegsControl(double KP, double KI, double KD) {
 		super(KP, KI, KD);	
