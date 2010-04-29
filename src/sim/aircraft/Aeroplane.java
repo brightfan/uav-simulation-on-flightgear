@@ -28,6 +28,10 @@ public class Aeroplane {
 	private DatagramSocket serverSocket;
 	private byte[] statusBuffer = new byte[1024];
 	
+	public static double DEFAULT_NAVIGATION_HEIGHT = 1000;
+	public static double DEFAULT_NAVIGATION_SPEED = 100;
+	public static double ROLLOUT_VELOCITY = 68;
+	
 	/* charactor */
 	private float takeoffSpeed;
 	

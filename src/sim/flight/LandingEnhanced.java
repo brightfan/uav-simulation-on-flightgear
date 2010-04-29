@@ -183,7 +183,7 @@ public class LandingEnhanced extends AutoPilot {
 						System.out.println("Preparing for touching ground!");
 					}
 				}
-				
+
 				if (currentGlideSlopeWPIndex >= 6) {
 					approach3 = false;
 				}
@@ -315,9 +315,9 @@ public class LandingEnhanced extends AutoPilot {
 						+ desiredHeadingDirection);
 				System.out.println("Distance left: " + distance);
 				System.out.println("Droping rate is: " + dropingRate);
-				
+
 				if (hasRolledOut) {
-					breakCounter ++;
+					breakCounter++;
 				}
 
 				if (approach3) {
@@ -364,26 +364,12 @@ public class LandingEnhanced extends AutoPilot {
 
 	public void getImprovedInstuction() {
 		/* For rudder */
-		// double rudderOffset = 0;
-		/*
-		 * double currentHeadBearing = Direction.getDirection(prevPosition
-		 * .getLatitude(), prevPosition.getLongitude(), aeroplane
-		 * .getLatitude(), aeroplane.getLongitude());
-		 */
 		double bearingDiff = (aeroplane.getHeadingDeg() + airport
 				.getRunwayDirection()) / 2;
-		// DirectionError.getError(aeroplane.getHeadingDeg(),
-		// airport.getRunwayDirection());
-		// bearingDiff = -bearingDiff;
 
-		rudder = (float) yawDegsControl.getResult((bearingDiff
-				- aeroplane.getHeadingDeg()) * 2);
-
-		/*
-		 * rudderOffset = Math.sin(Math.toRadians(bearingDiff)) * 2;
-		 * rudderOffset = Constraint.constraint(rudderOffset, 0.5, -0.5); rudder
-		 * = (float) rudderOffset;
-		 */
+		rudder = (float) yawDegsControl.getResult((bearingDiff - aeroplane
+				.getHeadingDeg())
+				* YawDegsControl.AMP_COEFFICIENT);
 
 		/* For aileron */
 		double currentBearing = Direction.getDirection(aeroplane.getLatitude(),
@@ -396,9 +382,11 @@ public class LandingEnhanced extends AutoPilot {
 		directionError = DirectionError.constrainError(directionError);
 		directionError = -directionError;
 
-		double desiredAileron = Math.sin(Math.toRadians(directionError)) * 30;
+		double desiredAileron = Math.sin(Math.toRadians(directionError))
+				* RollDegsControl.DEGS_AMP_COEFFICIENT;
 
-		aileron = (float) rollDegsControl.getResult((desiredAileron
-				- aeroplane.getRollDeg()) * 2.5);
+		aileron = (float) rollDegsControl.getResult((desiredAileron - aeroplane
+				.getRollDeg())
+				* RollDegsControl.AMP_COEFFICIENT);
 	}
 }

@@ -3,7 +3,10 @@ package sim.airport;
 import java.util.ArrayList;
 import java.util.List;
 
+import sim.aircraft.Aeroplane;
+import sim.globalvalue.GlobalValue;
 import sim.utils.Constants;
+import sim.utils.Constraint;
 import sim.utils.GlideSlopeUtils;
 import sim.utils.Waypoint;
 
@@ -19,6 +22,8 @@ public abstract class Airport {
 	public static double GLIDESLOPETANGENT = 0.09;
 	private static double GLIDESLOPEPOINTRAIUSCONST = 1.0 / 15;
 	public List<Waypoint> glideSlope;
+	
+	public static double RETIFIED_GS_AMP_COEFFICIENT = 10;
 
 	public void setRunwayDirection(double direction) {
 		this.runwayDirection = direction;
@@ -75,14 +80,17 @@ public abstract class Airport {
 					.generateWaypointByDistanceAndBearing(latitude, longitude,
 							distance, bearing);
 			double localHeight = distance * GLIDESLOPETANGENT
-					/ Constants.FOOTTOMETER + landHeight + 25;
-			if (localHeight > 1000) {
-				localHeight = 1000;
-			}
+					/ Constants.FOOTTOMETER + landHeight
+					+ GlobalValue.SAFETYHEIGHT;
+			localHeight = Constraint.constraint(localHeight,
+					Aeroplane.DEFAULT_NAVIGATION_HEIGHT, 0);
 			waypoint.setHeight(localHeight);
 			waypoint.setApproachRadius(dDistance * GLIDESLOPEPOINTRAIUSCONST
-					+ 7);
-			waypoint.setSpeedLimit(68 + 32.0 / 3000 * distance);
+					+ GlobalValue.TOLERANCERANGE);
+			waypoint
+					.setSpeedLimit(Aeroplane.ROLLOUT_VELOCITY
+							+ (Aeroplane.DEFAULT_NAVIGATION_SPEED - Aeroplane.ROLLOUT_VELOCITY)
+							/ GLIDESLOPEINDEX[2] * distance);
 			prevDistance = distance;
 
 			glideSlope.add(waypoint);
@@ -118,9 +126,9 @@ public abstract class Airport {
 				newGlideSlope.add(glideSlope.get(i));
 			} else {
 				double distance = 0;
-				distance = GLIDESLOPEINDEX[i] / 1000.0;
+				distance = GLIDESLOPEINDEX[i] / Constants.KILO;
 				distance *= distance;
-				distance *= 10; /* NOT SURE WHETHER 15 IS ENOUGH */
+				distance *= RETIFIED_GS_AMP_COEFFICIENT; /* NEED TO BE TUNED */
 				if (distance > 1) {
 					Waypoint newWaypoint = GlideSlopeUtils
 							.generateWaypointByDistanceAndBearing(glideSlope
@@ -132,8 +140,7 @@ public abstract class Airport {
 					newWaypoint
 							.setSpeedLimit(glideSlope.get(i).getSpeedLimit());
 					newGlideSlope.add(newWaypoint);
-				}
-				else {
+				} else {
 					newGlideSlope.add(glideSlope.get(i));
 				}
 			}

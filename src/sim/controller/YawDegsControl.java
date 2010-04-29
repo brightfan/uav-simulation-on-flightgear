@@ -2,6 +2,7 @@ package sim.controller;
 
 
 public class YawDegsControl extends PIDBase {
+	public static double AMP_COEFFICIENT = 2;
 
 	public YawDegsControl(double KP, double KI, double KD) {
 		super(KP, KI, KD);
