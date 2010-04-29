@@ -75,7 +75,7 @@ public abstract class Airport {
 					.generateWaypointByDistanceAndBearing(latitude, longitude,
 							distance, bearing);
 			double localHeight = distance * GLIDESLOPETANGENT
-					/ Constants.FOOTTOMETER + landHeight + 20;
+					/ Constants.FOOTTOMETER + landHeight + 25;
 			if (localHeight > 1000) {
 				localHeight = 1000;
 			}
@@ -89,7 +89,7 @@ public abstract class Airport {
 		}
 
 		glideSlope.add(new Waypoint("Roll_Out", latitude, longitude, 7,
-				landHeight + 10, 65));
+				landHeight + 15, 65));
 		glideSlope.add(new Waypoint("Runway_End", runwayEndingPoint
 				.getLatitude(), runwayEndingPoint.getLongitude(), 5,
 				landHeight, 0));

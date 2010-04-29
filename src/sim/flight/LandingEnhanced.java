@@ -36,6 +36,9 @@ public class LandingEnhanced extends AutoPilot {
 
 	private boolean deleteDebugWaypoint = false;
 
+	private boolean approach3 = false;
+	private int breakCounter = 0;
+
 	public LandingEnhanced(Aeroplane aeroplane, Airport airport) {
 		super(aeroplane, airport);
 		// groundHeadingControl = new GroundHeadingControl(0.2, 0.005, 10.0);
@@ -80,6 +83,7 @@ public class LandingEnhanced extends AutoPilot {
 	public AutoPilot autoPilot() {
 		while (true) {
 			aeroplane.readStatus();
+			/* Next waypoint point control block START */
 			/* Whether Arrived Way Point? */
 			double distance = Distance.getDistance(aeroplane.getLatitude(),
 					aeroplane.getLongitude(), glideSlopeWaypoints.get(
@@ -135,38 +139,73 @@ public class LandingEnhanced extends AutoPilot {
 					// glideSlopeWaypoints = getNewGlideSlope();
 				}
 			}
+			/* Next waypoint point control block END */
 
+			/* Rudder and Aileron control block START */
 			double desiredHeadingDirection = Direction.getDirection(aeroplane
 					.getLatitude(), aeroplane.getLongitude(),
 					glideSlopeWaypoints.get(currentGlideSlopeWPIndex)
 							.getLatitude(), glideSlopeWaypoints.get(
 							currentGlideSlopeWPIndex).getLongitude());
 
-			if (currentGlideSlopeWPIndex <= 6) {
+			if (!approach3) {
+				if (currentGlideSlopeWPIndex <= 6) {
 
-				double directionError = DirectionError.getError(aeroplane
-						.getHeadingDeg(), desiredHeadingDirection);
-				directionError = DirectionError.constrainError(directionError);
+					double directionError = DirectionError.getError(aeroplane
+							.getHeadingDeg(), desiredHeadingDirection);
+					directionError = DirectionError
+							.constrainError(directionError);
 
-				double desiredAileron = Math
-						.sin(Math.toRadians(directionError)) * 30;
+					double desiredAileron = Math.sin(Math
+							.toRadians(directionError)) * 30;
 
-				aileron = (float) rollDegsControl.getResult(desiredAileron
-						- aeroplane.getRollDeg());
+					aileron = (float) rollDegsControl.getResult(desiredAileron
+							- aeroplane.getRollDeg());
+				} else {
+
+					if ((aeroplane.getAltitudeAglFt() < 70)
+							&& (!startingRollOut)) {
+						startingRollOut = true;
+						System.out.println("Preparing for touching ground!");
+					}
+
+					aileron = (float) rollDegsControl.getResult(0 - aeroplane
+							.getRollDeg());
+					rudder = (float) yawDegsControl
+							.getResult(desiredHeadingDirection
+									- aeroplane.getHeadingDeg());
+				}
 			} else {
-
-				if ((aeroplane.getAltitudeAglFt() < 70) && (!startingRollOut)) {
-					startingRollOut = true;
-					System.out.println("Preparing for touching ground!");
+				if (currentGlideSlopeWPIndex > 10) {
+					if ((aeroplane.getAltitudeAglFt() < 70)
+							&& (!startingRollOut)) {
+						startingRollOut = true;
+						System.out.println("Preparing for touching ground!");
+					}
+				}
+				
+				if (currentGlideSlopeWPIndex >= 6) {
+					approach3 = false;
 				}
 
-				aileron = (float) rollDegsControl.getResult(0 - aeroplane
-						.getRollDeg());
-				rudder = (float) yawDegsControl
-						.getResult(desiredHeadingDirection
-								- aeroplane.getHeadingDeg());
-			}
+				if (currentGlideSlopeWPIndex > 0) {
+					getImprovedInstuction();
+				} else {
+					double directionError = DirectionError.getError(aeroplane
+							.getHeadingDeg(), desiredHeadingDirection);
+					directionError = DirectionError
+							.constrainError(directionError);
 
+					double desiredAileron = Math.sin(Math
+							.toRadians(directionError)) * 30;
+
+					aileron = (float) rollDegsControl.getResult(desiredAileron
+							- aeroplane.getRollDeg());
+				}
+			}
+			/* Rudder and Aileron control block END */
+
+			/* Pitch control block START */
 			double currentHeight = aeroplane.getAltitudeFt();
 			double desiredPitch = 0;
 			double dropingRate = aeroplane.getVerticalSpeedFps(); /*
@@ -209,7 +248,7 @@ public class LandingEnhanced extends AutoPilot {
 				elevator = (float) Constraint.constraint(elevator, 0.4, -0.4);
 			} else {
 				// desiredPitch = 4.0;
-				desiredPitch = 0.5 * (-6.0 - dropingRate);
+				desiredPitch = 0.8 * (-6.0 - dropingRate);
 				if (desiredPitch > 4.0) {
 					desiredPitch = 4.0;
 				}
@@ -220,6 +259,7 @@ public class LandingEnhanced extends AutoPilot {
 				elevator = (float) Constraint.constraint(elevator, 0.4, -0.4);
 			}
 
+			/* Pitch control block END */
 			if ((currentGlideSlopeWPIndex > glideSlopeWaypoints.size() - 3)
 					&& (Math.abs(dropingRate) < 1) && (!hasRolledOut)) {
 				hasRolledOut = true;
@@ -228,12 +268,14 @@ public class LandingEnhanced extends AutoPilot {
 			// throttle = (float) airborneSpeedControl.getResult(navigationSpeed
 			// - aeroplane.getGroundSpeedKt());
 
+			/* Throttle control block START */
 			throttle = (float) airborneSpeedControl.getResult(navigationSpeed
 					- aeroplane.getAirSpeedKt());
+			/* Throttle control block END */
 
 			// rudder = (float) 0;
 			// aileron += (float) 0.006;
-			if (hasRolledOut) {
+			if ((hasRolledOut) && (breakCounter > 10)) {
 				brakeParking = 1;
 			} else {
 				brakeParking = 0;
@@ -273,6 +315,14 @@ public class LandingEnhanced extends AutoPilot {
 						+ desiredHeadingDirection);
 				System.out.println("Distance left: " + distance);
 				System.out.println("Droping rate is: " + dropingRate);
+				
+				if (hasRolledOut) {
+					breakCounter ++;
+				}
+
+				if (approach3) {
+					System.out.println("Approach 3 is being used!");
+				}
 
 				if (isLogging) {
 					KMLFileWritter.writeToFile(aeroplane.getLatitude(),
@@ -310,5 +360,45 @@ public class LandingEnhanced extends AutoPilot {
 
 		return airport.getRevisedGlideSlope(currentGlideSlopeWPIndex,
 				isClockWise);
+	}
+
+	public void getImprovedInstuction() {
+		/* For rudder */
+		// double rudderOffset = 0;
+		/*
+		 * double currentHeadBearing = Direction.getDirection(prevPosition
+		 * .getLatitude(), prevPosition.getLongitude(), aeroplane
+		 * .getLatitude(), aeroplane.getLongitude());
+		 */
+		double bearingDiff = (aeroplane.getHeadingDeg() + airport
+				.getRunwayDirection()) / 2;
+		// DirectionError.getError(aeroplane.getHeadingDeg(),
+		// airport.getRunwayDirection());
+		// bearingDiff = -bearingDiff;
+
+		rudder = (float) yawDegsControl.getResult((bearingDiff
+				- aeroplane.getHeadingDeg()) * 2);
+
+		/*
+		 * rudderOffset = Math.sin(Math.toRadians(bearingDiff)) * 2;
+		 * rudderOffset = Constraint.constraint(rudderOffset, 0.5, -0.5); rudder
+		 * = (float) rudderOffset;
+		 */
+
+		/* For aileron */
+		double currentBearing = Direction.getDirection(aeroplane.getLatitude(),
+				aeroplane.getLongitude(), airport.getRunwayStartingPoint()
+						.getLatitude(), airport.getRunwayStartingPoint()
+						.getLongitude());
+
+		double directionError = DirectionError.getError(currentBearing, airport
+				.getRunwayDirection());
+		directionError = DirectionError.constrainError(directionError);
+		directionError = -directionError;
+
+		double desiredAileron = Math.sin(Math.toRadians(directionError)) * 30;
+
+		aileron = (float) rollDegsControl.getResult((desiredAileron
+				- aeroplane.getRollDeg()) * 2.5);
 	}
 }
